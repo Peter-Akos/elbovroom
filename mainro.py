@@ -37,18 +37,14 @@ def scrape_autovit(max_page):
 
                 if details_div:
                     details_text = details_div.text.strip()
-                    # Extract year, km, and fuel type from details_text
-                    year_match = re.search(r'\b(\d{4})\b', details_text)
-                    year = year_match.group(1) if year_match else "N/A"
 
-                    km_match = re.search(r'(\d+(?:\s*\d+)*)\s*km', details_text, re.IGNORECASE)
-                    km = km_match.group(1).replace(" ", "") if km_match else "N/A"
+                    details_text = details_text.replace(' + ','+').replace('kmCombustibil', ' ').replace('Anul producției',' ').replace('Km', '').replace('  ', ' ')
 
-                    fuel_types = ['Benzină', 'Diesel', 'Electric', 'Hibrid']
-                    for fuel in fuel_types:
-                        if fuel in details_text:
-                            fuel_type = fuel
-                            break
+                    details = details_text.split(' ')
+
+                    km = details[0] + details[1]
+                    fuel_type = details[2]
+                    year = details[3]
 
                 power = item.find('p', class_='epwfahw10').text.strip() if item.find('p', class_='epwfahw10') else "N/A"
                 price = item.find('div', class_='ooa-2p9dfw').text.strip() if item.find('div',
