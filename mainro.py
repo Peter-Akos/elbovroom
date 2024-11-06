@@ -31,6 +31,9 @@ def scrape_autovit(max_page):
                 title = item.find('h1', class_='epwfahw9').text.strip() if item.find('h1', class_='epwfahw9') else "N/A"
 
                 details_div = item.find('dl', class_='ooa-1uwk9ii epwfahw11')
+                subheader = item.find('p', class_='epwfahw10 ooa-1tku07r er34gjf0')
+
+
                 year = "N/A"
                 km = "N/A"
                 fuel_type = "N/A"
@@ -42,6 +45,8 @@ def scrape_autovit(max_page):
 
                     details = details_text.split(' ')
 
+                    #
+
                     km = details[0] + details[1]
                     fuel_type = details[2]
                     year = details[3]
@@ -52,6 +57,14 @@ def scrape_autovit(max_page):
                 link = item.find('h1', class_='epwfahw9').find('a')['href'] if item.find('h1',
                                                                                          class_='epwfahw9') and item.find(
                     'h1', class_='epwfahw9').find('a') else "N/A"
+
+
+                if subheader:
+                    text = subheader.text.strip()
+                    texts = text.split('•')
+                    power = texts[1].replace(' ','').replace('CP', '')
+
+
 
                 if title != "N/A" and price != "N/A":  # Only add non-empty entries
                     data.append([title, year, km, power, fuel_type, price, link])
