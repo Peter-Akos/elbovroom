@@ -17,6 +17,8 @@ KILOMETERS_MAX = "300000"
 PRICE_MIN = "3000"
 PRICE_MAX = "10000"
 
+INCREMENT_PRICE_BY = 50
+
 
 def fill_search_field(curr_driver, data_test_id_value: str, field_value: str):
     try:
@@ -54,7 +56,8 @@ def scroll_to_bottom(curr_driver):
     time.sleep(5)  # Wait briefly to allow content to load
 
 
-def get_listing_titles_and_details(curr_driver, div_class_prefix: str, title_class: str, details_test_id: str, price_test_id: str, link_xpath: str) -> tuple[list, list, list, list]:
+def get_listing_titles_and_details(curr_driver, div_class_prefix: str, title_class: str, details_test_id: str,
+                                   price_test_id: str, link_xpath: str) -> tuple[list, list, list, list]:
     try:
         # Locate divs with class starting with the specified prefix
         div_elements = WebDriverWait(curr_driver, 10).until(
@@ -104,9 +107,6 @@ def get_listing_titles_and_details(curr_driver, div_class_prefix: str, title_cla
         return [], [], [], []  # Update return statement to include links
 
 
-
-
-
 def scroll_hover_and_click_next_button(curr_driver, next_button_test_id: str):
     """Scroll to, hover over, and click the 'Next' pagination button."""
     try:
@@ -133,12 +133,12 @@ def scroll_hover_and_click_next_button(curr_driver, next_button_test_id: str):
         return False
     return True
 
+
 def save_data(data, filename):
     # current_df = pd.read_csv(filename)
     new_df = pd.DataFrame(data)
     # united = pd.concat([current_df, new_df], ignore_index=True)
     new_df.to_csv(filename, index=False)
-
 
 
 def run_session(price_min, price_max, filename):
@@ -163,7 +163,8 @@ def run_session(price_min, price_max, filename):
     # Fill in the search fields
     fill_search_field(curr_driver=driver, data_test_id_value="price-filter-min-input", field_value=price_min)
     fill_search_field(curr_driver=driver, data_test_id_value="price-filter-max-input", field_value=price_max)
-    fill_search_field(curr_driver=driver, data_test_id_value="first-registration-filter-min-input", field_value=CAR_AGE_MIN)
+    fill_search_field(curr_driver=driver, data_test_id_value="first-registration-filter-min-input",
+                      field_value=CAR_AGE_MIN)
     fill_search_field(curr_driver=driver, data_test_id_value="mileage-filter-min-input", field_value=KILOMETERS_MIN)
     fill_search_field(curr_driver=driver, data_test_id_value="mileage-filter-max-input", field_value=KILOMETERS_MAX)
 
@@ -210,26 +211,21 @@ def run_session(price_min, price_max, filename):
     driver.quit()
 
 
-
 if __name__ == '__main__':
     CAR_AGE_MIN = "2010"
     KILOMETERS_MIN = "150000"
     KILOMETERS_MAX = "300000"
 
-    PRICE_MIN = 3000
+    PRICE_MIN = 5000
     PRICE_MAX = 10000
 
-    for price_min in range(PRICE_MIN, PRICE_MAX, 200):
-        price_max = price_min + 199
+    for price_min in range(PRICE_MIN, PRICE_MAX, INCREMENT_PRICE_BY):
+        price_max = price_min + INCREMENT_PRICE_BY - 1
         filename = f"vigyazz-{price_min}-{price_max}.csv"
         run_session(str(price_min), str(price_max), filename)
 
         # Update the price parameters here
         if price_max < PRICE_MAX:
-            print(f"Updating price range to {price_min + 200} - {price_max + 200}")
+            print(f"Updating price range to {price_min + INCREMENT_PRICE_BY} - {price_max + INCREMENT_PRICE_BY}")
         else:
             print("Reached the maximum price range.")
-
-
-
-
